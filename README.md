@@ -1,0 +1,1 @@
+remember to download datasets from https://trddev.com/hackathon-2025/ and place them in datasets folder
