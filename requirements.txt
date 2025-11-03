@@ -2,6 +2,8 @@ pandas
 matplotlib
 plotly
 jupyter
+scipy
+seaborn
 
 dask
 polars
