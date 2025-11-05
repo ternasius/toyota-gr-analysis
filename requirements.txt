@@ -4,6 +4,7 @@ plotly
 jupyter
 scipy
 seaborn
+scikit-learn
 
 dask
 polars
