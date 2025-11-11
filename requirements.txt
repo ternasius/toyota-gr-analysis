@@ -4,7 +4,5 @@ plotly
 jupyter
 scipy
 seaborn
+streamlit
 scikit-learn
-
-dask
-polars

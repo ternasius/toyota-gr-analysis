@@ -36,3 +36,5 @@ Position & Lap Data
 VBOX_Long_Minutes	GPS longitude (degrees)
 VBOX_Lat_Min		GPS latitude (degrees)
 Laptrigger_lapdist_dls	Distance from start/finish line (meters)
+
+sebring telemetry formatted differently compared to others, can't filter
