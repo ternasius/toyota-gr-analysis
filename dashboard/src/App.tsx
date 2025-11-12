@@ -21,6 +21,7 @@ import { ToastContainer } from './components/ToastContainer';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LiveRegion } from './components/LiveRegion';
 import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp';
+import { UploadModal } from './components/UploadModal';
 import { useDashboardStore } from './store/useDashboardStore';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { performanceMonitor } from './utils/performanceMonitor';
@@ -39,6 +40,7 @@ function App() {
   } = useDashboardStore();
   
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   // Load manifest on app start
   useEffect(() => {
@@ -134,9 +136,13 @@ function App() {
         isOpen={showKeyboardHelp} 
         onClose={() => setShowKeyboardHelp(false)} 
       />
+      <UploadModal 
+        isOpen={isUploadModalOpen} 
+        onClose={() => setIsUploadModalOpen(false)} 
+      />
       <ErrorBoundary>
         <DashboardLayout
-          navbar={<Navbar />}
+          navbar={<Navbar onUploadClick={() => setIsUploadModalOpen(true)} />}
           summaryCards={<SummaryCards />}
           leftSidebar={
             <aside className="p-4 space-y-4 slide-in-left" aria-label="Lap time selection">

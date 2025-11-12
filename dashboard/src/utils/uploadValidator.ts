@@ -166,9 +166,9 @@ export function validateTelemetryData(points: TelemetryPoint[]): ValidationResul
       break;
     }
     
-    // Throttle should be 0-100%
-    if (point.aps !== null && (point.aps < 0 || point.aps > 100)) {
-      invalidRanges.push(`Row ${i + 2}: Throttle position ${point.aps}% is outside valid range (0-100)`);
+    // Throttle should be 0-101% (allow 1% tolerance for sensor noise)
+    if (point.aps !== null && (point.aps < 0 || point.aps > 101)) {
+      invalidRanges.push(`Row ${i + 2}: Throttle position ${point.aps}% is outside valid range (0-101)`);
       break;
     }
   }

@@ -7,20 +7,20 @@
  * Requirements: 2.1, 6.1, 6.2
  */
 
-import { useState } from 'react';
 import { Upload } from 'lucide-react';
 import { useDashboardStore } from '../store/useDashboardStore';
-import { UploadModal } from './UploadModal';
 import { ExportButton } from './ExportButton';
 
-export function Navbar() {
+interface NavbarProps {
+  onUploadClick: () => void;
+}
+
+export function Navbar({ onUploadClick }: NavbarProps) {
   const { 
     selectedTrack, 
     trackManifest, 
     setTrack,
   } = useDashboardStore();
-  
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const handleTrackChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const trackId = event.target.value;
@@ -30,10 +30,6 @@ export function Navbar() {
         // TODO: Show error toast in task 13
       });
     }
-  };
-
-  const handleUploadClick = () => {
-    setIsUploadModalOpen(true);
   };
 
   return (
@@ -85,7 +81,7 @@ export function Navbar() {
 
           {/* Upload Button - Touch optimized (min 44x44px) */}
           <button
-            onClick={handleUploadClick}
+            onClick={onUploadClick}
             className="min-w-[44px] min-h-[44px] px-3 py-2 bg-gray-900 border border-gray-700 rounded hover:border-racing-red hover-racing focus:outline-none focus:ring-2 focus:ring-racing-red/50 flex items-center justify-center gap-2 text-sm telemetry-label"
             title="Upload Lap Data"
             aria-label="Upload lap data"
@@ -95,12 +91,6 @@ export function Navbar() {
           </button>
         </div>
       </div>
-      
-      {/* Upload Modal */}
-      <UploadModal 
-        isOpen={isUploadModalOpen} 
-        onClose={() => setIsUploadModalOpen(false)} 
-      />
     </nav>
   );
 }

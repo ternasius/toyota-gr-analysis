@@ -39,3 +39,4 @@ dist-ssr
 .venv/
 datasets/
 datasets_clean/
+lap_exports/

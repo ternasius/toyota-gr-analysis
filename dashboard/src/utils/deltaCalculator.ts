@@ -7,7 +7,7 @@
  * Requirements: 5.6, 2.5 (memoization)
  */
 
-import type { LapTelemetry, TelemetryPoint } from '../types/data';
+import type { LapTelemetry } from '../types/data';
 
 // ============================================================================
 // Memoization Cache
@@ -25,7 +25,7 @@ const deltaAnalysisCache = new Map<string, DeltaAnalysis>();
  */
 const keyPointsCache = new Map<string, Array<{
   time: number;
-  type: 'maxSpeed' | 'minSpeed' | 'maxBrake' | 'maxThrottle';
+  type: 'maxSpeed' | 'minSpeed' | 'maxThrottle';
   value: number;
   label: string;
 }>>();
@@ -67,7 +67,7 @@ function getDeltaAnalysisCacheKey(uploadedLap: LapTelemetry, referenceLap: LapTe
  */
 export interface DeltaPoint {
   time: number;           // Time in seconds
-  type: 'sector' | 'maxSpeed' | 'minSpeed' | 'maxBrake' | 'maxThrottle';
+  type: 'sector' | 'maxSpeed' | 'minSpeed' | 'maxThrottle';
   label: string;          // Human-readable label
   uploadedValue: number;  // Value from uploaded lap
   referenceValue: number; // Value from reference lap
@@ -88,39 +88,12 @@ export interface DeltaAnalysis {
 }
 
 /**
- * Find the index of the telemetry point closest to a given time
- * 
- * @param points - Array of telemetry points
- * @param targetTime - Target time in seconds
- * @returns Index of closest point
- */
-function findClosestPointIndex(points: TelemetryPoint[], targetTime: number): number {
-  if (points.length === 0) return -1;
-  
-  let closestIndex = 0;
-  let minDiff = Infinity;
-  
-  points.forEach((_point, index) => {
-    // Use index as time proxy (assuming 10Hz sampling)
-    const pointTime = index * 0.1;
-    const diff = Math.abs(pointTime - targetTime);
-    
-    if (diff < minDiff) {
-      minDiff = diff;
-      closestIndex = index;
-    }
-  });
-  
-  return closestIndex;
-}
-
-/**
  * Calculate time delta at a specific point
- * Uses linear interpolation if exact time doesn't exist
+ * Uses cumulative time delta based on lap progress
  * 
  * @param uploadedLap - The uploaded lap
  * @param referenceLap - The reference lap to compare against
- * @param time - Time in seconds
+ * @param time - Time in seconds (reference lap time)
  * @returns Time delta (positive = uploaded is slower)
  */
 function calculateDeltaAtTime(
@@ -128,20 +101,14 @@ function calculateDeltaAtTime(
   referenceLap: LapTelemetry,
   time: number
 ): number {
-  const uploadedIndex = findClosestPointIndex(uploadedLap.points, time);
-  const referenceIndex = findClosestPointIndex(referenceLap.points, time);
+  // Calculate progress through the lap (0 to 1)
+  const progress = time / referenceLap.metadata.duration;
   
-  if (uploadedIndex === -1 || referenceIndex === -1) {
-    return 0;
-  }
+  // Calculate expected time at this progress in uploaded lap
+  const uploadedTimeAtProgress = progress * uploadedLap.metadata.duration;
   
-  // Simple delta calculation based on point indices
-  // In a more sophisticated implementation, this would use actual timestamps
-  // and interpolate between points
-  const uploadedTime = uploadedIndex * 0.1;
-  const referenceTime = referenceIndex * 0.1;
-  
-  return uploadedTime - referenceTime;
+  // Delta is the difference
+  return uploadedTimeAtProgress - time;
 }
 
 /**
@@ -193,7 +160,7 @@ function calculateSectorDeltas(
  */
 function findKeyPoints(lap: LapTelemetry): Array<{
   time: number;
-  type: 'maxSpeed' | 'minSpeed' | 'maxBrake' | 'maxThrottle';
+  type: 'maxSpeed' | 'minSpeed' | 'maxThrottle';
   value: number;
   label: string;
 }> {
@@ -207,7 +174,7 @@ function findKeyPoints(lap: LapTelemetry): Array<{
   
   const keyPoints: Array<{
     time: number;
-    type: 'maxSpeed' | 'minSpeed' | 'maxBrake' | 'maxThrottle';
+    type: 'maxSpeed' | 'minSpeed' | 'maxThrottle';
     value: number;
     label: string;
   }> = [];
@@ -259,44 +226,27 @@ function findKeyPoints(lap: LapTelemetry): Array<{
     });
   }
   
-  // Find max brake point
-  let maxBrake = -Infinity;
-  let maxBrakeIndex = -1;
+  // Calculate average brake usage (percentage of lap on brakes)
+  let brakePointCount = 0;
+  let totalPoints = 0;
   
-  lap.points.forEach((point, index) => {
+  lap.points.forEach((point) => {
+    totalPoints++;
     const brakeValue = Math.max(point.pbrake_f || 0, point.pbrake_r || 0);
-    if (brakeValue > maxBrake) {
-      maxBrake = brakeValue;
-      maxBrakeIndex = index;
+    if (brakeValue > 5) { // Consider braking if pressure > 5 bar
+      brakePointCount++;
     }
   });
   
-  if (maxBrakeIndex !== -1 && maxBrake > 0) {
+  const avgBrakeUsage = totalPoints > 0 ? (brakePointCount / totalPoints) * 100 : 0;
+  
+  // Add as a key point at mid-lap for comparison
+  if (totalPoints > 0) {
     keyPoints.push({
-      time: maxBrakeIndex * 0.1,
-      type: 'maxBrake',
-      value: maxBrake,
-      label: 'Max Brake',
-    });
-  }
-  
-  // Find max throttle point
-  let maxThrottle = -Infinity;
-  let maxThrottleIndex = -1;
-  
-  lap.points.forEach((point, index) => {
-    if (point.aps !== null && point.aps > maxThrottle) {
-      maxThrottle = point.aps;
-      maxThrottleIndex = index;
-    }
-  });
-  
-  if (maxThrottleIndex !== -1 && maxThrottle > 0) {
-    keyPoints.push({
-      time: maxThrottleIndex * 0.1,
+      time: (lap.points.length * 0.5) * 0.1,
       type: 'maxThrottle',
-      value: maxThrottle,
-      label: 'Max Throttle',
+      value: avgBrakeUsage,
+      label: 'Brake Usage',
     });
   }
   
@@ -335,6 +285,14 @@ function calculateKeyPointDeltas(
     // Calculate time delta at this point
     const delta = calculateDeltaAtTime(uploadedLap, referenceLap, refPoint.time);
     
+    // Format description based on type
+    let description: string;
+    if (refPoint.label === 'Brake Usage') {
+      description = `${refPoint.label}: ${refPoint.value.toFixed(1)}% vs ${uploadedPoint.value.toFixed(1)}%`;
+    } else {
+      description = `${refPoint.label}: ${refPoint.value.toFixed(1)} vs ${uploadedPoint.value.toFixed(1)}`;
+    }
+    
     deltas.push({
       time: refPoint.time,
       type: refPoint.type,
@@ -342,7 +300,7 @@ function calculateKeyPointDeltas(
       uploadedValue: uploadedPoint.value,
       referenceValue: refPoint.value,
       delta,
-      description: `${refPoint.label}: ${refPoint.value.toFixed(1)} vs ${uploadedPoint.value.toFixed(1)}`,
+      description,
     });
   });
   
