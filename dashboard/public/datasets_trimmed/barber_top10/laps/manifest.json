@@ -1,0 +1,103 @@
+{
+  "track": "barber_top10",
+  "generatedAt": "2025-11-12T17:32:38.536152Z",
+  "lapCount": 8,
+  "laps": [
+    {
+      "driverNumber": 13,
+      "lapNumber": 2,
+      "filename": "lap_13_2.json.gz",
+      "size": 29049,
+      "pointCount": 1130,
+      "duration": 113.0,
+      "maxSpeed": 126.67,
+      "avgSpeed": 88.52415178571428,
+      "firstTimestamp": "2025-09-07 15:05:02.033000+00:00",
+      "lastTimestamp": "2025-09-07 15:05:48.996000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 3,
+      "filename": "lap_13_3.json.gz",
+      "size": 57456,
+      "pointCount": 2256,
+      "duration": 225.60000000000002,
+      "maxSpeed": 187.27,
+      "avgSpeed": 135.68777041942607,
+      "firstTimestamp": "2025-09-07 15:05:48.996000+00:00",
+      "lastTimestamp": "2025-09-07 15:07:26.273000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 6,
+      "filename": "lap_13_6.json.gz",
+      "size": 113238,
+      "pointCount": 4393,
+      "duration": 439.3,
+      "maxSpeed": 187.15,
+      "avgSpeed": 135.70414333706606,
+      "firstTimestamp": "2025-09-06 18:46:42.038000+00:00",
+      "lastTimestamp": "2025-09-07 15:12:18.314000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 7,
+      "filename": "lap_13_7.json.gz",
+      "size": 110277,
+      "pointCount": 4237,
+      "duration": 423.70000000000005,
+      "maxSpeed": 187.17,
+      "avgSpeed": 136.2739346110485,
+      "firstTimestamp": "2025-09-06 18:48:20.895000+00:00",
+      "lastTimestamp": "2025-09-07 15:13:57.610000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 8,
+      "filename": "lap_13_8.json.gz",
+      "size": 109108,
+      "pointCount": 4189,
+      "duration": 418.90000000000003,
+      "maxSpeed": 186.96,
+      "avgSpeed": 135.47968072976053,
+      "firstTimestamp": "2025-09-06 18:49:58.795000+00:00",
+      "lastTimestamp": "2025-09-07 15:15:37.977000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 11,
+      "filename": "lap_13_11.json.gz",
+      "size": 111406,
+      "pointCount": 4341,
+      "duration": 434.1,
+      "maxSpeed": 187.05,
+      "avgSpeed": 136.1073181818182,
+      "firstTimestamp": "2025-09-06 18:54:51.734000+00:00",
+      "lastTimestamp": "2025-09-07 15:20:26.783000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 17,
+      "filename": "lap_13_17.json.gz",
+      "size": 111788,
+      "pointCount": 4307,
+      "duration": 430.70000000000005,
+      "maxSpeed": 187.2,
+      "avgSpeed": 134.99981961668544,
+      "firstTimestamp": "2025-09-06 19:04:38.767000+00:00",
+      "lastTimestamp": "2025-09-07 15:30:12.438000+00:00"
+    },
+    {
+      "driverNumber": 13,
+      "lapNumber": 20,
+      "filename": "lap_13_20.json.gz",
+      "size": 115403,
+      "pointCount": 4464,
+      "duration": 446.40000000000003,
+      "maxSpeed": 187.31,
+      "avgSpeed": 135.21173140954497,
+      "firstTimestamp": "2025-09-06 19:09:33.218000+00:00",
+      "lastTimestamp": "2025-09-07 15:35:05.070000+00:00"
+    }
+  ]
+}

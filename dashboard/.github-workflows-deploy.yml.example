@@ -1,0 +1,186 @@
+# GitHub Actions Workflow for Deploying Race Telemetry Dashboard
+# 
+# This is an EXAMPLE workflow. To use it:
+# 1. Create .github/workflows/ directory in your repository root
+# 2. Copy this file to .github/workflows/deploy.yml
+# 3. Configure secrets in GitHub repository settings
+# 4. Customize for your deployment target (Vercel, Netlify, or AWS)
+
+name: Deploy Dashboard
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  # Build and test job
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: dashboard/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./dashboard
+        run: npm ci
+      
+      - name: Run type check
+        working-directory: ./dashboard
+        run: npm run type-check
+      
+      - name: Run linter
+        working-directory: ./dashboard
+        run: npm run lint
+      
+      - name: Build application
+        working-directory: ./dashboard
+        run: npm run build:prod
+        env:
+          VITE_DATA_BASE_URL: ${{ secrets.VITE_DATA_BASE_URL || '/datasets_trimmed' }}
+          VITE_MAX_CACHE_SIZE: 104857600
+          VITE_WORKER_POOL_SIZE: 4
+          VITE_MAX_SELECTED_DRIVERS: 5
+          VITE_DOWNSAMPLE_THRESHOLD: 2000
+          VITE_ENABLE_DEBUG: false
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-build
+          path: dashboard/dist
+          retention-days: 7
+
+  # Deploy to Vercel
+  deploy-vercel:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dashboard-build
+          path: dashboard/dist
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./dashboard
+          vercel-args: '--prod'
+
+  # Deploy to Netlify
+  deploy-netlify:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dashboard-build
+          path: dashboard/dist
+      
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './dashboard/dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+  # Deploy to AWS S3 + CloudFront
+  deploy-aws:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dashboard-build
+          path: dashboard/dist
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Upload to S3
+        working-directory: ./dashboard
+        run: |
+          # Upload static assets with long cache
+          aws s3 sync dist/ s3://${{ secrets.AWS_S3_BUCKET }}/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html" \
+            --exclude "*.json"
+          
+          # Upload index.html with no-cache
+          aws s3 cp dist/index.html s3://${{ secrets.AWS_S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+          
+          # Upload JSON files with short cache
+          aws s3 sync dist/ s3://${{ secrets.AWS_S3_BUCKET }}/ \
+            --exclude "*" \
+            --include "*.json" \
+            --cache-control "public, max-age=300"
+      
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+# Required GitHub Secrets:
+# 
+# For Vercel:
+#   VERCEL_TOKEN - Vercel authentication token
+#   VERCEL_ORG_ID - Vercel organization ID
+#   VERCEL_PROJECT_ID - Vercel project ID
+# 
+# For Netlify:
+#   NETLIFY_AUTH_TOKEN - Netlify authentication token
+#   NETLIFY_SITE_ID - Netlify site ID
+# 
+# For AWS:
+#   AWS_ACCESS_KEY_ID - AWS access key
+#   AWS_SECRET_ACCESS_KEY - AWS secret key
+#   AWS_S3_BUCKET - S3 bucket name
+#   AWS_CLOUDFRONT_DISTRIBUTION_ID - CloudFront distribution ID
+# 
+# Optional:
+#   VITE_DATA_BASE_URL - Custom data URL (defaults to /datasets_trimmed)

@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-11-12T01:13:01.449178Z",
+  "tracks": [
+    {
+      "id": "barber_top10",
+      "name": "Barber Motorsports Park",
+      "top10Count": 8,
+      "totalDrivers": 1,
+      "fileSizes": {
+        "lapTimes": 255,
+        "stats": 2836,
+        "telemetryTotal": 749781
+      }
+    },
+    {
+      "id": "cota_top10",
+      "name": "Circuit of the Americas",
+      "top10Count": 10,
+      "totalDrivers": 3,
+      "fileSizes": {
+        "lapTimes": 241,
+        "stats": 3688,
+        "telemetryTotal": 997619
+      }
+    },
+    {
+      "id": "indy_top10",
+      "name": "Indianapolis Motor Speedway",
+      "top10Count": 10,
+      "totalDrivers": 4,
+      "fileSizes": {
+        "lapTimes": 240,
+        "stats": 3478,
+        "telemetryTotal": 1076779
+      }
+    },
+    {
+      "id": "ra_top10",
+      "name": "Road America",
+      "top10Count": 10,
+      "totalDrivers": 6,
+      "fileSizes": {
+        "lapTimes": 226,
+        "stats": 3459,
+        "telemetryTotal": 582989
+      }
+    },
+    {
+      "id": "sonoma_top10",
+      "name": "Sonoma Raceway",
+      "top10Count": 10,
+      "totalDrivers": 4,
+      "fileSizes": {
+        "lapTimes": 272,
+        "stats": 3868,
+        "telemetryTotal": 832227
+      }
+    },
+    {
+      "id": "vir_top10",
+      "name": "Virginia International Raceway",
+      "top10Count": 10,
+      "totalDrivers": 4,
+      "fileSizes": {
+        "lapTimes": 234,
+        "stats": 2808,
+        "telemetryTotal": 860742
+      }
+    }
+  ]
+}

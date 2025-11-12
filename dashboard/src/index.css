@@ -1,0 +1,371 @@
+@import "tailwindcss";
+
+@theme {
+  --color-racing-bg: #0b0b0b;
+  --color-racing-red: #C8102E;
+  
+  --font-family-mono: 'Roboto Mono', 'Courier New', monospace;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #0b0b0b;
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #0b0b0b;
+  /* Subtle carbon fiber texture background (Requirement 6.1, 6.2) */
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.01) 2px,
+      rgba(255, 255, 255, 0.01) 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.01) 2px,
+      rgba(255, 255, 255, 0.01) 4px
+    );
+}
+
+/* ============================================================================
+   Accessibility Styles (Requirement 16.2, 16.3)
+   ============================================================================ */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus indicators for keyboard navigation (Requirement 16.2) */
+*:focus-visible {
+  outline: 2px solid #C8102E;
+  outline-offset: 2px;
+}
+
+/* Enhanced focus for interactive elements */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 2px solid #C8102E;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(200, 16, 46, 0.2);
+}
+
+/* Skip to main content link (for keyboard navigation) */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #C8102E;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* ============================================================================
+   Racing Aesthetic Enhancements (Requirement 6.1, 6.2, 6.3, 6.4)
+   Task 19.2: Apply final styling and racing aesthetic
+   ============================================================================ */
+
+/* Carbon fiber texture for cards and panels */
+.carbon-fiber {
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    );
+  background-color: #0f0f0f;
+}
+
+/* Racing red gradient accent */
+.racing-gradient {
+  background: linear-gradient(135deg, #C8102E 0%, #8B0A1F 100%);
+}
+
+/* Metallic shine effect for headers */
+.metallic-shine {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shine 3s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0%, 100% {
+    background-position: 200% 0;
+  }
+  50% {
+    background-position: -200% 0;
+  }
+}
+
+/* Pulse animation for loading indicators */
+.pulse-racing {
+  animation: pulse-racing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-racing {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Smooth fade-in animation for content */
+.fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide-in animation for sidebars */
+.slide-in-left {
+  animation: slide-in-left 0.3s ease-out;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Racing-themed hover effects */
+.hover-racing {
+  transition: all 0.2s ease-in-out;
+}
+
+.hover-racing:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
+}
+
+/* Glow effect for active elements */
+.glow-racing {
+  box-shadow: 0 0 10px rgba(200, 16, 46, 0.5),
+              0 0 20px rgba(200, 16, 46, 0.3),
+              0 0 30px rgba(200, 16, 46, 0.1);
+}
+
+/* Bold, all-caps labels for telemetry channels (Requirement 6.4) */
+.telemetry-label {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #FFFFFF;
+}
+
+/* Monospace font for numeric values (Requirement 6.3) */
+.numeric-value {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+/* Racing stripe accent */
+.racing-stripe {
+  position: relative;
+}
+
+.racing-stripe::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #C8102E 0%, #8B0A1F 100%);
+}
+
+/* Smooth transitions for all interactive elements */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"],
+[role="link"] {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Enhanced button hover states */
+button:hover:not(:disabled),
+[role="button"]:hover:not([aria-disabled="true"]) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled),
+[role="button"]:active:not([aria-disabled="true"]) {
+  transform: translateY(0);
+}
+
+/* Loading spinner with racing theme */
+.spinner-racing {
+  border: 3px solid rgba(200, 16, 46, 0.1);
+  border-top-color: #C8102E;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Progress bar with racing gradient */
+.progress-racing {
+  background: linear-gradient(
+    90deg,
+    #C8102E 0%,
+    #FF1744 50%,
+    #C8102E 100%
+  );
+  background-size: 200% 100%;
+  animation: progress-shine 1.5s ease-in-out infinite;
+}
+
+@keyframes progress-shine {
+  0%, 100% {
+    background-position: 0% 0;
+  }
+  50% {
+    background-position: 100% 0;
+  }
+}
+
+/* Card hover effects with racing aesthetic */
+.card-racing {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 15, 0.95) 0%,
+    rgba(20, 20, 20, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.card-racing:hover {
+  border-color: rgba(200, 16, 46, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(200, 16, 46, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Scrollbar styling with racing theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C8102E;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #0b0b0b;
+}
+
+/* Selection color with racing theme */
+::selection {
+  background-color: rgba(200, 16, 46, 0.3);
+  color: #FFFFFF;
+}
+
+::-moz-selection {
+  background-color: rgba(200, 16, 46, 0.3);
+  color: #FFFFFF;
+}
