@@ -285,12 +285,12 @@ function calculateKeyPointDeltas(
     // Calculate time delta at this point
     const delta = calculateDeltaAtTime(uploadedLap, referenceLap, refPoint.time);
     
-    // Format description based on type
+    // Format description based on type (uploaded vs reference)
     let description: string;
     if (refPoint.label === 'Brake Usage') {
-      description = `${refPoint.label}: ${refPoint.value.toFixed(1)}% vs ${uploadedPoint.value.toFixed(1)}%`;
+      description = `${refPoint.label}: ${uploadedPoint.value.toFixed(1)}% vs ${refPoint.value.toFixed(1)}%`;
     } else {
-      description = `${refPoint.label}: ${refPoint.value.toFixed(1)} vs ${uploadedPoint.value.toFixed(1)}`;
+      description = `${refPoint.label}: ${uploadedPoint.value.toFixed(1)} vs ${refPoint.value.toFixed(1)}`;
     }
     
     deltas.push({
